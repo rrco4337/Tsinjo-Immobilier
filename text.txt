@@ -1,0 +1,16 @@
+
+
+
+Structure de dossier
+            -pycache
+            -model
+                produit.py
+                user.py
+            routes
+                 main_routes.py
+            static/css
+            templates
+            app.py
+            config.py
+            database.py  //connexion a la base en utilisant pymsql
+

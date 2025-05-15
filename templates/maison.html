@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Critères Maison à Vendre</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 40px;
+      background-color: #f4f4f4;
+    }
+    form {
+      background-color: white;
+      padding: 20px;
+      border-radius: 8px;
+      max-width: 500px;
+      margin: auto;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    label {
+      display: block;
+      margin-top: 15px;
+    }
+    input, select {
+      width: 100%;
+      padding: 8px;
+      margin-top: 5px;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+    }
+    button {
+      margin-top: 20px;
+      padding: 10px 20px;
+      background-color: #007BFF;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+    #map {
+      height: 300px;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+
+<h2 style="text-align:center;">Formulaire Critères Maison à louer</h2>
+
+<form action="traitement.php" method="post">
+
+  <label for="acces">Accès :</label>
+  <select id="acces" name="acces" required>
+    <option value="">-- Sélectionner --</option>
+    <option value="0">Aucun</option>
+    <option value="1">Moto</option>
+    <option value="2">Voiture</option>
+    <option value="3">Voiture + parking</option>
+  </select>
+
+ <label for="typeMaison">Type de Maison :</label>
+<select id="typeMaison" name="typeMaison" required>
+  <option value="">-- Sélectionner --</option>
+  <option value="1">F1 / T1 - 1 pièce principale</option>
+  <option value="2">F2 / T2 - 2 pièces principales</option>
+  <option value="3">F3 / T3 - 3 pièces principales</option>
+  <option value="4">F4 / T4 - 4 pièces principales</option>
+  <option value="5">F5 / T5 - 5 pièces principales</option>
+  <option value="6">F6 / T6 - 6 pièces principales</option>
+</select>
+
+  <label for="type">Type :</label>
+  <select id="type" name="type" required>
+    <option value="">-- Sélectionner --</option>
+    <option value="0">Appartement</option>
+    <option value="1">Maison</option>
+ 
+  </select>
+
+  <label for="toilette">Douche ou Toilette intérieure :</label>
+  <select id="toilette" name="toilette" required>
+    <option value="">-- Sélectionner --</option>
+    <option value="0">Oui</option>
+    <option value="1">Non</option>
+ 
+    <option value="Aucune">Aucune</option>
+  </select>
+
+  <label for="nbChambres">Nombre de Chambres :</label>
+  <input type="number" id="nbChambres" name="nbChambres" min="1" required>
+
+  <label>Choisir la ville sur la carte :</label>
+  <div id="map"></div>
+  <!-- Champs cachés pour latitude et longitude -->
+  <input type="hidden" id="latitude" name="latitude">
+  <input type="hidden" id="longitude" name="longitude">
+
+  <button type="submit">Soumettre</button>
+</form>
+
+<script>
+  // Définir les limites de Madagascar
+  var bounds = L.latLngBounds(
+    L.latLng(-25.6, 43.2),  // Coin sud-ouest
+    L.latLng(-11.9, 50.5)   // Coin nord-est
+  );
+
+  // Initialiser la carte avec des restrictions
+  var map = L.map('map', {
+    maxBounds: bounds,
+    maxBoundsViscosity: 1.0,
+    minZoom: 6,
+    maxZoom: 16
+  }).setView([-18.8792, 47.5079], 6); // Centre : Antananarivo
+
+  // Charger les tuiles OpenStreetMap
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '© OpenStreetMap contributors'
+  }).addTo(map);
+
+  var marker = null;
+
+  map.on('click', function(e) {
+    if (!bounds.contains(e.latlng)) {
+      alert("Merci de sélectionner un emplacement à Madagascar.");
+      return;
+    }
+
+    var lat = e.latlng.lat.toFixed(6);
+    var lon = e.latlng.lng.toFixed(6);
+
+    if (marker) {
+      map.removeLayer(marker);
+    }
+
+    marker = L.marker([lat, lon]).addTo(map)
+      .bindPopup("Position sélectionnée: " + lat + ", " + lon)
+      .openPopup();
+    
+    document.getElementById('latitude').value = lat;
+    document.getElementById('longitude').value = lon;
+  });
+</script>
+</body>
+</html>

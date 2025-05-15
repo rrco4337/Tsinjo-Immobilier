@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Critères Terrain à Vendre</title>
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css" />
+
+    <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script>
+    <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 40px;
+      background-color: #f9f9f9;
+    }
+    form {
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      max-width: 500px;
+      margin: auto;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    label {
+      display: block;
+      margin-top: 15px;
+    }
+    input, select {
+      width: 100%;
+      padding: 8px;
+      margin-top: 5px;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+    }
+    button {
+      margin-top: 20px;
+      padding: 10px 20px;
+      background-color: #28a745;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #218838;
+    }
+  </style>
+</head>
+<body>
+
+<h2 style="text-align:center;">Formulaire Critères Terrain à Vendre</h2>
+
+<form method="post">
+
+<label for="surface">Surface (en m²) :</label>
+  <input type="number" id="surface" name="surface" min="0" required>
+
+
+  <label for="acces">Accès :</label>
+  <select id="acces" name="acces" required>
+    <option value="">-- Sélectionner --</option>
+    <option value="0">Aucun</option>
+    <option value="1">Moto</option>
+    <option value="2">Voiture</option>
+    <option value="3">Voiture + parking</option>
+  </select>
+
+
+ <label for="typePapier">Type de papier :</label>
+<select id="typePapier" name="typePapier" required>
+  <option value="">-- Sélectionner --</option>
+  <option value="Titre Foncier">Titre Foncier</option>
+  <option value="Certificat Foncier">Certificat Foncier</option>
+  <option value="Lettre d’Attribution">Lettre d’Attribution</option>
+  <option value="Aucun">Aucun</option>
+</select>
+
+<label for="pretBatir">Prêt à bâtir :</label>
+<select id="pretBatir" name="pretBatir" required>
+  <option value="">-- Sélectionner --</option>
+  <option value="Oui">Oui</option>
+  <option value="Non">Non</option>
+</select>
+
+<label for="cloture">Clôturé :</label>
+<select id="cloture" name="cloture" required>
+  <option value="">-- Sélectionner --</option>
+  <option value="Oui">Oui</option>
+  <option value="Non">Non</option>
+</select>
+  
+<label>Choisir la ville sur la carte :</label>
+<div id="map" style="height: 300px; margin-top: 10px;"></div>
+
+<input type="hidden" id="latitude" name="latitude">
+<input type="hidden" id="longitude" name="longitude">
+
+
+  <button type="submit">Soumettre</button>
+</form>
+<script>
+ // Définir les limites de Madagascar
+  var bounds = L.latLngBounds(
+    L.latLng(-25.6, 43.2),  // Coin sud-ouest
+    L.latLng(-11.9, 50.5)   // Coin nord-est
+  );
+
+  // Initialiser la carte avec des restrictions
+  var map = L.map('map', {
+    maxBounds: bounds,
+    maxBoundsViscosity: 1.0,
+    minZoom: 6,
+    maxZoom: 16
+  }).setView([-18.8792, 47.5079], 6); // Centre : Antananarivo
+
+  // Charger les tuiles OpenStreetMap
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '© OpenStreetMap contributors'
+  }).addTo(map);
+
+  var marker = null;
+
+  map.on('click', function(e) {
+    if (!bounds.contains(e.latlng)) {
+      alert("Merci de sélectionner un emplacement à Madagascar.");
+      return;
+    }
+
+    var lat = e.latlng.lat.toFixed(6);
+    var lon = e.latlng.lng.toFixed(6);
+
+    if (marker) {
+      map.removeLayer(marker);
+    }
+
+    marker = L.marker([lat, lon]).addTo(map)
+      .bindPopup("Position sélectionnée: " + lat + ", " + lon)
+      .openPopup();
+    
+    document.getElementById('latitude').value = lat;
+    document.getElementById('longitude').value = lon;
+  });
+</script>
+</body>
+</html>
